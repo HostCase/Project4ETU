@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <unordered_map>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 const int maxWords = 50;
 const int maxWordLength = 10;
@@ -11,6 +12,8 @@ void processString(const string& str, string& text, int &filein);
 void removeExtraSpaces(string& text);
 void limitWordsLength(string& text);
 void removeExtraPunct(string& text);
+void correctLetterCase(string& text);
+void separateWords(const string& text);
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
@@ -24,7 +27,7 @@ int main() {
         if (!(filein)) {
             processString(choice, text, filein);
         }
-        cout<<"What do you want to do with the file?\n0 - exit\n1 - Remove spaces\n2 - Remove extra punctuation\n5 - show text\n";
+        cout<<"What do you want to do with the file?\n0 - exit\n1 - Remove spaces\n2 - Remove extra punctuation\n3 - limit word lengt\n4 - Correct letter case\n5 - Group text\n6 - show text\n";
         cin >> whatyouwant;
         switch (whatyouwant) {
         case 1: {
@@ -39,8 +42,28 @@ int main() {
             cout << "Completed\n";
             break;
         }
+        case 3: {
+            cout << "Limiting word lenght\n";
+            limitWordsLength(text);
+            cout << "Completed\n";
+            break;
+        }
+        case 4: {
+            cout << "Correcting letter case\n";
+            correctLetterCase(text);
+            cout << "Completed\n";
+            break;
+        }
         case 5: {
+            cout << "Grouping starting";
+            limitWordsLength(text);
+            separateWords(text);
+            cout << "Completed\n";
+            break;
+              }
+        case 6: {
             cout <<"Your text is "<< text << "\n";
+            break;
         }
         }
     } while (whatyouwant);
@@ -75,7 +98,6 @@ void processString(const string& str,string &text,int &filein ) {
                 while (getline(fin, line)) {
                     text += line + " ";
                 }
-                limitWordsLength(text);
 
             }
             filein = 1;
@@ -85,7 +107,6 @@ void processString(const string& str,string &text,int &filein ) {
         case 2: {
             cout << "Enter the string: \n";
             getline(cin, text);
-            limitWordsLength(text);
             filein = 1;
             break;
         }
@@ -102,13 +123,10 @@ void removeExtraSpaces(string& text) {
 
     for (char c : text) {
         if (isspace(c)) {
-            if (previousIsSpace) {
-                continue;
-            }
-            else {
+            if (!previousIsSpace) {
                 output += ' ';
-                previousIsSpace = true;
             }
+            previousIsSpace = true;
         }
         else {
             output += c;
@@ -124,7 +142,7 @@ void removeExtraSpaces(string& text) {
 void limitWordsLength(string& text) {
     istringstream stream(text);
     string word;
-    string* words = new string[maxWords]; 
+    string* words = new string[maxWords];
     int wordCount = 0;
 
     while (stream >> word) {
@@ -139,13 +157,17 @@ void limitWordsLength(string& text) {
             break;
         }
     }
+
     text = "";
-   
-    
     for (int i = 0; i < wordCount; i++) {
-        text += words[i] + " ";
+        text += words[i];
+        if (i < wordCount - 1) {
+            text += " ";
+        }
+        if (i == (wordCount - 1)) {
+            text += ".";
+        }
     }
-    text.pop_back(); 
 
     delete[] words; // ПРОГРАММИРУЕМ КАК УМЕЕМ
 }
@@ -172,4 +194,37 @@ void removeExtraPunct(string& text) {
     }
 
     text = output;
+}
+
+void correctLetterCase(string& text) {
+    for (int i = 0; i < text.length(); i++) {
+        if (isalpha(text[i]) && (i == 0 || text[i - 1] == ' ')) {
+            text[i] = toupper(text[i]);
+        }
+        else {
+            text[i] = tolower(text[i]);
+        }
+    }
+}
+
+
+void separateWords(const string& text) {
+    string litters_words, digit_words, mix_words;
+    string word;
+    istringstream stream(text);
+    while (stream >> word) {
+        if (all_of(word.begin(), word.end(), isalpha)) {
+            litters_words += word + " ";
+        }
+        else if (all_of(word.begin(), word.end(), isdigit)) {
+            digit_words += word + " ";
+        }
+        else {
+            mix_words += word + " ";
+        }
+    }
+
+    cout << "Words only with litters " << litters_words << endl;
+    cout << "Words only with digits " << digit_words << endl;
+    cout << "Worlds mixed " << mix_words << endl;
 }
