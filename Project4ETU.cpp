@@ -17,6 +17,7 @@ void correctLetterCase(string& text);
 void separateWords(const string& text);
 void removeChars(string& text);
 void removeChar(string& text);
+int linearSearchSubstring(const string& text, const string& secondtext);
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
@@ -30,7 +31,7 @@ int main() {
         if (!(filein)) {
             processString(choice, text, filein);
         }
-        cout<<"What do you want to do with the file?\n0 - exit\n1 - Remove spaces\n2 - Remove extra punctuation\n3 - limit word lengt\n4 - Correct letter case\n5 - Group text\n6 - Remove symbol from string\n7 - show text\n";
+        cout<<"What do you want to do with the file?\n0 - exit\n1 - Remove spaces\n2 - Remove extra punctuation\n3 - limit word lengt\n4 - Correct letter case\n5 - Group text\n6 - Remove symbol from string\n7 - Linear search\n8 - show text\n";
         cin >> whatyouwant;
         switch (whatyouwant) {
         case 1: {
@@ -70,6 +71,20 @@ int main() {
             cout << "Completed\n";
         }
         case 7: {
+            cout << "Linear search starting\nPlease, enter substring\n";
+            string secondtext;
+            cin >> secondtext;
+            int result = linearSearchSubstring(text, secondtext);
+            if (result != -1) {
+                cout << "Substring found at position: " << result << endl;
+            }
+            else {
+                cout << "Substring not found\n";
+            }
+            cout << "Completed\n";
+            break;
+        }
+        case 8: {
             cout <<"Your text is "<< text << "\n";
             break;
         }
@@ -243,4 +258,19 @@ void removeChar(string& text) {
     cout << "Enter symbol that you want remove from string:\n ";
     cin >> input;
     text.erase(remove(text.begin(), text.end(), input), text.end());
+}
+
+
+int linearSearchSubstring(const string& text, const string& secondtext) {
+    int n = text.length();
+    int m = secondtext.length();
+    for (int i = 0; i <= n - m; ++i) {
+        int j;
+        for (j = 0; j < m; ++j)
+            if (text[i + j] != secondtext[j])
+                break;
+        if (j == m)
+            return i; 
+    }
+    return -1;
 }
