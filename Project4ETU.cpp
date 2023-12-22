@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <sstream>
 #include <algorithm>
+#include <cstring>
 using namespace std;
 const int maxWords = 50;
 const int maxWordLength = 10;
@@ -14,6 +15,8 @@ void limitWordsLength(string& text);
 void removeExtraPunct(string& text);
 void correctLetterCase(string& text);
 void separateWords(const string& text);
+void removeChars(string& text);
+void removeChar(string& text);
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
@@ -27,7 +30,7 @@ int main() {
         if (!(filein)) {
             processString(choice, text, filein);
         }
-        cout<<"What do you want to do with the file?\n0 - exit\n1 - Remove spaces\n2 - Remove extra punctuation\n3 - limit word lengt\n4 - Correct letter case\n5 - Group text\n6 - show text\n";
+        cout<<"What do you want to do with the file?\n0 - exit\n1 - Remove spaces\n2 - Remove extra punctuation\n3 - limit word lengt\n4 - Correct letter case\n5 - Group text\n6 - Remove symbol from string\n7 - show text\n";
         cin >> whatyouwant;
         switch (whatyouwant) {
         case 1: {
@@ -55,13 +58,18 @@ int main() {
             break;
         }
         case 5: {
-            cout << "Grouping starting";
+            cout << "Grouping starting\n";
             limitWordsLength(text);
             separateWords(text);
             cout << "Completed\n";
             break;
               }
         case 6: {
+            cout << "Starting programm to remove symbols from string\n";
+            removeChar(text);
+            cout << "Completed\n";
+        }
+        case 7: {
             cout <<"Your text is "<< text << "\n";
             break;
         }
@@ -227,4 +235,12 @@ void separateWords(const string& text) {
     cout << "Words only with litters " << litters_words << endl;
     cout << "Words only with digits " << digit_words << endl;
     cout << "Worlds mixed " << mix_words << endl;
+}
+
+
+void removeChar(string& text) {
+    char input;
+    cout << "Enter symbol that you want remove from string:\n ";
+    cin >> input;
+    text.erase(remove(text.begin(), text.end(), input), text.end());
 }
